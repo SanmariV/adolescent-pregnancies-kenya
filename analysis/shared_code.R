@@ -54,7 +54,7 @@ summary(annual_preg_3)
 
 summary(annual_preg_5)
 
-#source("/Users/susanroets/Dropbox/Personal/R programming/WiGISKe/code/theme_swd.R")
+source("/Users/susanroets/Dropbox/Personal/R programming/WiGISKe/code/theme_swd.R")
 
 library(viridis)
 library(hrbrthemes)
