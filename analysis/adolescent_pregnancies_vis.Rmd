@@ -1,15 +1,14 @@
 ---
-title: "Adolescent Pregnancies in Kenya: 2016 - 2020"
-date: "`r Sys.Date()`"
-output: 
+title: "Adolescent Pregnancies in Kenya (2016 - 2020)"
+output:
   flexdashboard::flex_dashboard:
-    #storyboard: true
     orientation: rows
-    #vertical_layout: scroll
-    source_code: https://github.com/SanmariV/teenage-pregnancies-in-kenya
+    source_code: https://github.com/SanmariV/adolescent-pregnancies-kenya
     social: menu
 runtime: shiny
-
+resource_files:
+- Teenage Pregnancies Data 2016 to 2020_WardLevel_Quarterly.csv
+- shared_code.R
 ---
 
 ```{r setup, include=FALSE}
@@ -49,7 +48,7 @@ border-color: #1380A1
 }
 </style>
 ```{r include=FALSE}
-init_data <- read_csv("/Users/susanroets/Dropbox/Personal/R programming/teenage_pegnancies_kenya/teenage-pregnancies-kenya/analysis/Teenage Pregnancies Data 2016 to 2020_WardLevel_Quarterly.csv")
+init_data <- read_csv("Teenage Pregnancies Data 2016 to 2020_WardLevel_Quarterly.csv")
 
 # How many adolescent pregnancies per district from 2016 - 2020
 annual_preg <- init_data %>% 
@@ -101,8 +100,6 @@ annual_preg_5 <-
 summary(annual_preg_3)
 
 summary(annual_preg_5)
-
-source("/Users/susanroets/Dropbox/Personal/R programming/WiGISKe/code/theme_swd.R")
 
 library(viridis)
 library(hrbrthemes)
@@ -163,12 +160,12 @@ use_this_style <- function(){
                  plot.subtitle = ggplot2::element_text(family = font, 
                                                       size = 22, margin = ggplot2::margin(9, 0, 9,0)),
                  legend.position = "top", legend.text.align = 0,
-                 #legend.title = ggplot2::element_blank(), 
+                 legend.title = ggplot2::element_blank(), 
                  legend.text = ggplot2::element_text(family = font, size = 10, 
                                                      color = "#222222"), axis.title = ggplot2::element_blank(), 
-                 axis.text = ggplot2::element_text(family = font, size = 7, 
-                                                   color = "#222222"), axis.text.x = ggplot2::element_text(margin = ggplot2::margin(5, b = 10)), axis.ticks = ggplot2::element_blank(), 
-                 axis.line = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(), 
+                 axis.text = ggplot2::element_text(family = font, size = 10, 
+                                                   color = "#222222"), axis.text.x = ggplot2::element_text(margin = ggplot2::margin(5, b = 10)), axis.ticks = ggplot2::element_line(color = "#cbcbcb"), 
+                 axis.line = ggplot2::element_line(color = "#cbcbcb"), panel.grid.minor = ggplot2::element_blank(), 
                  panel.grid.major.y = ggplot2::element_line(color = "#cbcbcb"), 
                  panel.grid.major.x = ggplot2::element_blank(), panel.background = ggplot2::element_blank(),strip.background = ggplot2::element_rect(fill = "white"), 
                  strip.text = ggplot2::element_text(size = 22, hjust = 0))
@@ -180,18 +177,21 @@ use_this_style2 <- function(){
   ggplot2::theme(plot.title = ggplot2::element_text(family = font, 
                                                     size = 12, face = "bold", color = "#222222"),
                  plot.caption = ggplot2::element_text(family = font, 
-                                                    size = 8, color = "#222222"),
+                                                    size = 10, color = "#222222"),
                  plot.subtitle = ggplot2::element_text(family = font, 
-                                                      size = 28, margin = ggplot2::margin(9, 0, 9,0)),
-                 legend.position = "bottom", legend.text.align = 0,
+                                                      size = 22, margin = ggplot2::margin(9, 0, 9,0)),
+                 legend.position = "top", legend.text.align = 0,
                  legend.title = ggplot2::element_blank(), 
-                 legend.text = ggplot2::element_text(family = font, size = 18, 
+                 legend.text = ggplot2::element_text(family = font, size = 12, 
                                                      color = "#222222"), axis.title = ggplot2::element_blank(), 
                  axis.text = ggplot2::element_text(family = font, size = 12, 
-                                                   color = "#222222"), axis.text.x = ggplot2::element_text(margin = ggplot2::margin(5, b = 10)), axis.ticks = ggplot2::element_blank(), 
-                 axis.line = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(), 
+                                                   color = "#222222"), 
+                 axis.text.x = ggplot2::element_text(family = font, size = 12,color = "#222222"), 
+                 axis.ticks = ggplot2::element_line(color = "#cbcbcb"), 
+                 axis.line = ggplot2::element_line(color = "#cbcbcb"), panel.grid.minor = ggplot2::element_blank(), 
                  panel.grid.major.y = ggplot2::element_line(color = "#cbcbcb"), 
-                 panel.grid.major.x = ggplot2::element_blank(), panel.background = ggplot2::element_blank(),strip.background = ggplot2::element_rect(fill = "white"), 
+                 panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"), 
+                 panel.background = ggplot2::element_blank(),strip.background = ggplot2::element_rect(fill = "white"), 
                  strip.text = ggplot2::element_text(size = 22, hjust = 0))
 }
 
@@ -204,7 +204,7 @@ db_plot <- ggplot(dumbbell_df, aes(x = `2016.1`, xend = `2020.2`, y = reorder(Co
                 ) +
   use_this_style() + 
   labs(title="Rise in reported pregnancies per county, 2016-2020",
-       caption = "Data source: ToothGrowth")
+       caption = "Data source: Women in GIS, Kenya and DHIS2 July 2020")
 
 glimpse(annual_preg_3)
 library(GGally)
@@ -298,9 +298,43 @@ grouped_bars <- ggplot(pregnancy_groups,
   labs(title="We're living longer",
        subtitle = "Biggest life expectancy rise, 1967-2007") +
   facet_wrap(~ County)
+
+# detail tabset 2: uptake of family planning
+family_plan <- init_data %>% 
+  select(periodid, orgunitlevel2, orgunitlevel3, orgunitlevel4, `adolescents (10-14 years) with  pregnancy`, `adolescent family planning uptake 10-14 yrs`, `adolescents (15-19 years) with  pregnancy`, `adolescent family planning uptake 15-19 yrs`)
+
+family_plan_1 <- family_plan %>% 
+  rename(`Age(10 - 14)` = `adolescents (10-14 years) with  pregnancy`,
+         `Age(15 - 19)` = `adolescents (15-19 years) with  pregnancy`,
+         county = orgunitlevel2, sub_county = orgunitlevel3, ward = orgunitlevel4,
+         `Family planning uptake: Age(10 - 14)` = `adolescent family planning uptake 10-14 yrs`,
+         `Family planning uptake: Age(15 - 19)` = `adolescent family planning uptake 15-19 yrs`) %>% 
+  replace_na(list(`Age(10 - 14)` = 0, `Age(15 - 19)` = 0, `Family planning uptake: Age(10 - 14)` = 0,
+                  `Family planning uptake: Age(15 - 19)` = 0)) %>% 
+  mutate(sub_county = str_sub(sub_county, end = -11)) %>% 
+  mutate(ward = str_sub(ward, end = -5)) %>% 
+  mutate(year = substring(periodid,1,4)) %>% 
+  mutate(q = substring(periodid,6,6)) %>% 
+  mutate(Year_quarter = paste0(year,".", q ))
+
+family_plan_2 <- family_plan_1 %>% 
+  select(-c(periodid,year, q))
+
+family_plan_3 <- family_plan_2 %>% 
+  select(Year_quarter, county, sub_county, ward,`Age(10 - 14)`, `Age(15 - 19)`,
+         `Family planning uptake: Age(10 - 14)`,`Family planning uptake: Age(15 - 19)`)
+
+family_plan_4 <- gather(family_plan_3, "Age Group", "Pregnancies", 5:6)
+family_plan_5 <- gather(family_plan_4, "Age Group Family Planning", "Uptake of Family Planning", 5:6)
+family_plan_5$Year_quarter <- as.numeric(family_plan_5$Year_quarter)
+
+family_plan_6 <- family_plan_5 %>% 
+  select(-`Age Group Family Planning`)
+
+family_plan_7 <- gather(family_plan_6, "Category", "Total", 6:7)
+family_plan_7$Category <- as_factor(family_plan_7$Category)
+
 ```
-
-
 
 Overview
 =======================================================================
@@ -309,7 +343,7 @@ Row
 -----------------------------------------------------------------------
 
 
-```{r fig.width=12, fig.height = 7}
+```{r fig.width=15, fig.height = 10}
 (db_plot)
 ```
 
@@ -389,7 +423,6 @@ renderValueBox({
 })
 ```
 
-
 Row
 -----------------------------------------------------------------------
 ```{r}
@@ -407,16 +440,112 @@ selectedCounty <- reactive({detail_data_4 %>%
 renderPlot({ggplot(selectedCounty(), 
          aes(x = selectedCounty()$Year_quarter, y = selectedCounty()$Total, 
                            fill = as.factor(selectedCounty()$`Age Group`))) +
-  geom_bar(stat="identity", position="dodge") +
+  geom_bar(stat="identity", position = "dodge") +
   geom_hline(yintercept = 0, size = 1, colour="#333333") +
   #geom_hline(yintercept = mean(selectedCounty()$Total), size = 1,
          #    lty = 2, colour = "red") +
   use_this_style2() +
   scale_fill_manual(values = c("#1380A1", "#FAAB18")) +
   labs(
-       subtitle = "Adolescent pregnancies per quarter",
-       caption = "Data source: ToothGrowth") +
-  theme(legend.position = "bottom")})
+       subtitle = "Adolescent pregnancies per yearly quarter",
+       caption = "Data source: Women in GIS, Kenya and DHIS2 July 2020") +
+  theme(legend.position = "bottom",
+        axis.text.x = element_text(face="bold", color="#333333", 
+                           size=14),
+        axis.ticks.x = element_line(color = "#cbcbcb"))})
+```
 
+Family planning effect
+=======================================================================
+
+Sidebar {.sidebar}
+-----------------------------------------------------------------------
+```{r}
+age <- c("Age(10 - 14)", "Age(15 - 19)")
+
+      selectInput("countyFP", "Select county:", choices = counties)
+      selectInput("age", "Select age group:", choices = age)
+```
+
+```{r}
+selectedDATA <- reactive({family_plan_7 %>%
+                        dplyr::filter(county == input$countyFP & age == input$age)
+                        })
+```
+Row
+-----------------------------------------------------------------------
+
+### Year & quarter where family planning had the greatest effect
+```{r }
+selectedBox4 <- reactive({family_plan_6 %>%
+                        dplyr::filter(county == input$countyFP & age == input$age)})
+
+renderValueBox({
+  display_year <- selectedBox4()[which.max(selectedBox4()$`Uptake of Family Planning` - selectedBox4()$`Pregnancies`),]
+  
+  valueBox(value = display_year$Year_quarter,
+           icon = "fa-chart-line",
+           color = "#1380A1"
+           )
+})
+```
+
+### Sub-County where family planning had the greatest effect
+```{r}
+selectedBox5 <- reactive({family_plan_6 %>%
+                        dplyr::filter(county == input$countyFP & age == input$age)})
+
+renderValueBox({
+  display_sub_county <- selectedBox5()[which.max(selectedBox5()$`Uptake of Family Planning` - selectedBox4()$`Pregnancies`),]
+  
+  valueBox(value = display_sub_county$sub_county,
+           icon = "fa-venus",
+           color = "#FAAB18"
+           )
+})
+```
+
+### Ward where family planning had the greatest effect
+```{r}
+selectedBox6 <- reactive({family_plan_6 %>%
+                        dplyr::filter(county == input$countyFP & age == input$age)})
+
+renderValueBox({
+  display_sub_county <- selectedBox6()[which.max(selectedBox6()$`Uptake of Family Planning` - selectedBox6()$`Pregnancies`),]
+  
+  valueBox(value = display_sub_county$ward,
+           icon = "fa-female",
+           color = "#1380A1"
+           )
+})
+```
+
+Row
+-----------------------------------------------------------------------
+
+```{r}
+#Make plot
+quarter_year <- c("2016.1","2016.2", "2016.3", "2016.4",
+                  "2017.1","2017.2", "2017.3", "2017.4",
+                  "2018.1","2018.2", "2018.3", "2018.4",
+                  "2019.1","2019.2", "2019.3", "2019.4",
+                  "2020.1","2020.2")
+
+renderPlot({ggplot(selectedDATA(), 
+         aes(x = selectedDATA()$Year_quarter, y = selectedDATA()$Total, 
+                           fill = selectedDATA()$Category)) +
+  geom_bar(stat="identity", position = "dodge") +
+  geom_hline(yintercept = 0, size = 1, colour="#333333") +
+  #geom_hline(yintercept = mean(selectedCounty()$Total), size = 1,
+         #    lty = 2, colour = "red") +
+  use_this_style2() +
+  scale_fill_manual(values = c("#1380A1", "#FAAB18")) +
+  labs(
+       subtitle = "Effect of family planning on adolescent pregnancies per yearly quarter",
+       caption = "Data source: Women in GIS, Kenya and DHIS2 July 2020") +
+  theme(legend.position = "bottom",
+        axis.text.x = element_text(face="bold", color="#333333", 
+                           size=14),
+        axis.ticks.x = element_line(color = "#cbcbcb"))})
 ```
 

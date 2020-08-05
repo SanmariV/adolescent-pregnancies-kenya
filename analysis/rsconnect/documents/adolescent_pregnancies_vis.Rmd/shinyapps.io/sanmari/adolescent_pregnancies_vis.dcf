@@ -1,0 +1,12 @@
+name: adolescent_pregnancies_vis
+title: adolescent_pregnancies_vis
+username:
+account: sanmari
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2643715
+bundleId: 3478858
+url: https://sanmari.shinyapps.io/adolescent_pregnancies_vis/
+when: 1596646890.28704
+asMultiple: FALSE
+asStatic: FALSE
