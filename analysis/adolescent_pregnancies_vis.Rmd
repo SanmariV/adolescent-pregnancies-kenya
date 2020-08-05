@@ -1,5 +1,6 @@
 ---
 title: "Adolescent Pregnancies in Kenya: 2016 - 2020"
+date: "`r Sys.Date()`"
 output: 
   flexdashboard::flex_dashboard:
     #storyboard: true
@@ -19,6 +20,34 @@ library(tidyverse)
 library(plotly)
 ```
 
+<style>
+.navbar{
+background-color: #1380A1;
+border-color: #1380A1
+}
+
+.navbar-inverse .navbar-nav > li > a:hover,
+.navbar-inverse .navbar-nav > li > a:focus{
+  background-color: #FAAB18;
+  color: white;
+}
+
+.navbar-inverse .navbar-nav > .active > a,
+.navbar-inverse .navbar-nav > .active > a:hover,
+.navbar-inverse .navbar-nav > .active > a:focus{
+  color: white;
+  background-color: #FAAB18
+}
+
+.navbar-inverse .navbar-toggle: hover,
+.navbar-inverse .navbar-toggle: focus{
+  background-color: #FAAB18
+}
+.navbar-inverse .navbar-collapse,
+.navbar-inverse .navbar-form{
+  border-color: #FAAB18;
+}
+</style>
 ```{r include=FALSE}
 init_data <- read_csv("/Users/susanroets/Dropbox/Personal/R programming/teenage_pegnancies_kenya/teenage-pregnancies-kenya/analysis/Teenage Pregnancies Data 2016 to 2020_WardLevel_Quarterly.csv")
 
@@ -124,14 +153,15 @@ dumbbell_df <- annual_preg_5 %>%
 
 unique(dumbbell_df$County)
 
-# Modification to axis test size of the bbstyle() function
+# Modification to axis test size of the bbstyle() function to use for overview page
 use_this_style <- function(){
   font <- "Helvetica"
   ggplot2::theme(plot.title = ggplot2::element_text(family = font, 
                                                     size = 12, face = "bold", color = "#222222"),
-                 
+                 plot.caption = ggplot2::element_text(family = font, 
+                                                    size = 8, color = "#222222"),
                  plot.subtitle = ggplot2::element_text(family = font, 
-                                                                                                                                        size = 22, margin = ggplot2::margin(9, 0, 9, 0)), plot.caption = ggplot2::element_blank(), 
+                                                      size = 22, margin = ggplot2::margin(9, 0, 9,0)),
                  legend.position = "top", legend.text.align = 0,
                  #legend.title = ggplot2::element_blank(), 
                  legend.text = ggplot2::element_text(family = font, size = 10, 
@@ -144,7 +174,28 @@ use_this_style <- function(){
                  strip.text = ggplot2::element_text(size = 22, hjust = 0))
 }
 
-#Make plot
+# Modification to axis test size of the bbstyle() function to use for detail page
+use_this_style2 <- function(){
+  font <- "Helvetica"
+  ggplot2::theme(plot.title = ggplot2::element_text(family = font, 
+                                                    size = 12, face = "bold", color = "#222222"),
+                 plot.caption = ggplot2::element_text(family = font, 
+                                                    size = 8, color = "#222222"),
+                 plot.subtitle = ggplot2::element_text(family = font, 
+                                                      size = 28, margin = ggplot2::margin(9, 0, 9,0)),
+                 legend.position = "bottom", legend.text.align = 0,
+                 legend.title = ggplot2::element_blank(), 
+                 legend.text = ggplot2::element_text(family = font, size = 18, 
+                                                     color = "#222222"), axis.title = ggplot2::element_blank(), 
+                 axis.text = ggplot2::element_text(family = font, size = 12, 
+                                                   color = "#222222"), axis.text.x = ggplot2::element_text(margin = ggplot2::margin(5, b = 10)), axis.ticks = ggplot2::element_blank(), 
+                 axis.line = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(), 
+                 panel.grid.major.y = ggplot2::element_line(color = "#cbcbcb"), 
+                 panel.grid.major.x = ggplot2::element_blank(), panel.background = ggplot2::element_blank(),strip.background = ggplot2::element_rect(fill = "white"), 
+                 strip.text = ggplot2::element_text(size = 22, hjust = 0))
+}
+
+#Make plot for overview page
 db_plot <- ggplot(dumbbell_df, aes(x = `2016.1`, xend = `2020.2`, y = reorder(County, gap), group = County)) + 
   geom_dumbbell(colour = "#dddddd",
                 size = 1.8,
@@ -152,7 +203,8 @@ db_plot <- ggplot(dumbbell_df, aes(x = `2016.1`, xend = `2020.2`, y = reorder(Co
                 colour_xend = "#1380A1"
                 ) +
   use_this_style() + 
-  labs(title="Rise in reported pregnancies per county, 2016-2020")
+  labs(title="Rise in reported pregnancies per county, 2016-2020",
+       caption = "Data source: ToothGrowth")
 
 glimpse(annual_preg_3)
 library(GGally)
@@ -200,14 +252,16 @@ glimpse(init_data)
 detail_data <- init_data %>% 
   select(periodid, orgunitlevel2, orgunitlevel3, orgunitlevel4,
          `adolescents (10-14 years) with  pregnancy`,
-         `adolescents (15-19 years) with  pregnancy`)
+         `adolescents (15-19 years) with  pregnancy`) %>% 
+  mutate(sub_county = str_sub(orgunitlevel3, end = -11)) %>% 
+  mutate(ward = str_sub(orgunitlevel4, end = -5))
 
 # replace NAs with 0
 detail_data <- detail_data %>% 
-  rename(county = orgunitlevel2, sub_county = orgunitlevel3,
-         ward = orgunitlevel4, age_10_to_14 = `adolescents (10-14 years) with  pregnancy`,
-         age_15_to_19 = `adolescents (15-19 years) with  pregnancy`) %>% 
-  replace_na(list(age_10_to_14 = 0, age_15_to_19 = 0))
+  rename(`Age(10 - 14)` = `adolescents (10-14 years) with  pregnancy`,
+         `Age(15 - 19)` = `adolescents (15-19 years) with  pregnancy`,
+         county = orgunitlevel2) %>% 
+  replace_na(list(`Age(10 - 14)` = 0, `Age(15 - 19)` = 0))
 
 detail_data_1 <- detail_data %>% 
   mutate(year = substring(periodid,1,4)) %>% 
@@ -218,14 +272,14 @@ detail_data_2 <- detail_data_1 %>%
   mutate(Year_quarter = paste0(year,".", q ))
 
 detail_data_2 <- detail_data_2 %>% 
-  select(-c(periodid, year, q))
+  select(-c(periodid, year, q, orgunitlevel3, orgunitlevel4))
 
 detail_data_2$Year_quarter <- as.numeric(detail_data_2$Year_quarter)
 
 str(detail_data_2)
 
 detail_data_2 <- detail_data_2 %>% 
-  mutate(total = age_10_to_14 + age_15_to_19)
+  mutate(total = `Age(10 - 14)` + `Age(15 - 19)`)
 
 max(detail_data_2$total)
 range(detail_data_2$total)
@@ -239,7 +293,7 @@ grouped_bars <- ggplot(pregnancy_groups,
   geom_hline(yintercept = 0, size = 1, colour="#333333") +
   geom_hline(yintercept = mean(pregnancy_groups$Total), size = 1,
              lty = 2, colour = "red") +
-  bbc_style() +
+  use_this_style() +
   scale_fill_manual(values = c("#1380A1", "#FAAB18")) +
   labs(title="We're living longer",
        subtitle = "Biggest life expectancy rise, 1967-2007") +
@@ -255,8 +309,8 @@ Row
 -----------------------------------------------------------------------
 
 
-```{r fig.width=12, fig.height=7}
-db_plot
+```{r fig.width=12, fig.height = 7}
+(db_plot)
 ```
 
 Detail
@@ -289,6 +343,9 @@ Row
 
 ### Year & quarter with highest reported cases 
 ```{r }
+#detail_data_2$sub_county <-unlist(strsplit(detail_data_2$sub_county, split=' ', fixed=TRUE))[1]
+#detail_data_2$ward <-unlist(strsplit(detail_data_2$ward, split=' ', fixed=TRUE))[1]
+
 selectedBox1 <- reactive({detail_data_2 %>%
                         dplyr::filter(county == input$county)})
 
@@ -297,7 +354,8 @@ renderValueBox({
   
   valueBox(value = display_year$Year_quarter,
            icon = "fa-chart-line",
-           color = "#1380A1")
+           color = "#1380A1"
+           )
 })
 ```
 
@@ -311,7 +369,8 @@ renderValueBox({
   
   valueBox(value = display_sub_county$sub_county,
            icon = "fa-venus",
-           color = "#1380A1")
+           color = "#FAAB18"
+           )
 })
 ```
 
@@ -325,7 +384,8 @@ renderValueBox({
   
   valueBox(value = display_sub_county$ward,
            icon = "fa-female",
-           color = "#1380A1")
+           color = "#1380A1"
+           )
 })
 ```
 
@@ -334,7 +394,7 @@ Row
 -----------------------------------------------------------------------
 ```{r}
 detail_data_3 <- detail_data_2 %>% 
-  select(county, sub_county, ward, age_10_to_14, age_15_to_19, Year_quarter)
+  select(county, sub_county, ward, `Age(10 - 14)`, `Age(15 - 19)`, Year_quarter)
 
 detail_data_4 <- gather(detail_data_3, "Age Group", "Total",4:5)
   
@@ -344,17 +404,19 @@ selectedCounty <- reactive({detail_data_4 %>%
 
 #Make plot
 
-renderPlot(ggplot(selectedCounty(), 
+renderPlot({ggplot(selectedCounty(), 
          aes(x = selectedCounty()$Year_quarter, y = selectedCounty()$Total, 
                            fill = as.factor(selectedCounty()$`Age Group`))) +
   geom_bar(stat="identity", position="dodge") +
   geom_hline(yintercept = 0, size = 1, colour="#333333") +
-  geom_hline(yintercept = mean(selectedCounty()$Total), size = 1,
-             lty = 2, colour = "red") +
-  bbc_style() +
+  #geom_hline(yintercept = mean(selectedCounty()$Total), size = 1,
+         #    lty = 2, colour = "red") +
+  use_this_style2() +
   scale_fill_manual(values = c("#1380A1", "#FAAB18")) +
   labs(
-       subtitle = "Adolescent pregnancies per yearly quarter")+
-  theme(legend.position = "bottom"))
+       subtitle = "Adolescent pregnancies per quarter",
+       caption = "Data source: ToothGrowth") +
+  theme(legend.position = "bottom")})
+
 ```
 
