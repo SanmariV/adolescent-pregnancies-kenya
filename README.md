@@ -1,33 +1,38 @@
 Adolescent Pregnancies in Kenya, 2016 - 2020
 ================
 
-## GitHub Documents
+## Introduction
 
-This is an R Markdown format used for publishing markdown documents to
-GitHub. When you click the **Knit** button all R code chunks are run and
-a markdown file (.md) suitable for publishing to GitHub is generated.
+The impact of Covid-19 on women and girls has been greatly felt over the
+past 100 days of COVID 19 in Kenya. With effects such as loss of
+livelihood leading to economic challenges, in accessibility to health
+service for pre and post-natal care. This also includes exposure to
+domestic violence due to the measures put in place to curb the spread of
+the CoronaVirus.
 
-## Including Code
+Among these impacts is the unprecedented impact on children attending
+school. New reports show a steep rise in the number of young girls aged
+10-19 presenting with pregnancy. In 2020 there’s a noted spike in the
+numbers reported between March to May compared to the reports of the
+same time period in 2019. These changes could be attributed to the
+closure of schools due to COVID-19 among other factors the work of Women
+in GIS Kenya (WiGISKe) will highlight this via data science.
 
-You can include R code in the document as follows:
+This repository is my attempt to visualize the data supplied by Women in
+GIS Kenya (WiGISKe) and the DHIS2. The dashboard of the data
+visualization can be found
+[**here**](https://sanmari.shinyapps.io/adolescent_pregnancies_vis).
 
-``` r
-summary(cars)
-```
+## Files
 
-    ##      speed           dist       
-    ##  Min.   : 4.0   Min.   :  2.00  
-    ##  1st Qu.:12.0   1st Qu.: 26.00  
-    ##  Median :15.0   Median : 36.00  
-    ##  Mean   :15.4   Mean   : 42.98  
-    ##  3rd Qu.:19.0   3rd Qu.: 56.00  
-    ##  Max.   :25.0   Max.   :120.00
+Main file is the **adolescent\_pregnancies\_vis.Rmd** file in the
+**analysis** folder.
 
-## Including Plots
+## Further Information
 
-You can also embed plots, for example:
+For more information regarding the data used, please contact [**Women in
+GIS Kenya (WiGISKe)**](http://wigis.co.ke/). Additional contact details:
 
-![](README_files/figure-gfm/pressure-1.png)<!-- -->
-
-Note that the `echo = FALSE` parameter was added to the code chunk to
-prevent printing of the R code that generated the plot.
+  - <i class="fa fa-envelope"></i> <wigiske@gmail.com>
+  - <i class="fa fa-twitter"></i>
+    [twitter.com/WiGISKe](https://twitter.com/WiGISKe)
